@@ -21,18 +21,20 @@ const navigation = [
 ]
 
 interface SidebarProps {
-  open: boolean
-  onClose: () => void
+  open?: boolean
+  onClose?: () => void
 }
 
-export function Sidebar({ open, onClose }: SidebarProps) {
+export function Sidebar({ open = false, onClose = () => {} }: SidebarProps) {
   const location = useLocation()
   const [demoOpen, setDemoOpen] = useState(false)
 
   // Close sidebar on route change (mobile)
   useEffect(() => {
-    onClose()
-  }, [location.pathname, onClose])
+    if (open) {
+      onClose()
+    }
+  }, [location.pathname])
 
   return (
     <>
