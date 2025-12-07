@@ -54,6 +54,8 @@ export function AddPropertyDialog({ open, onOpenChange, onPropertyAdded }: AddPr
     try {
       const propertyData: Partial<Property> = {
         ...formData,
+        property_type: formData.property_type as Property['property_type'],
+        availability_status: formData.availability_status as Property['availability_status'],
         rent_amount: parseInt(formData.rent_amount),
         deposit_amount: parseInt(formData.deposit_amount),
         bedrooms: parseInt(formData.bedrooms),
@@ -91,6 +93,8 @@ export function AddPropertyDialog({ open, onOpenChange, onPropertyAdded }: AddPr
       const mockProperty: Property = {
         id: `prop_${Date.now()}`,
         ...formData,
+        property_type: formData.property_type as Property['property_type'],
+        availability_status: formData.availability_status as Property['availability_status'],
         rent_amount: parseInt(formData.rent_amount) || 0,
         deposit_amount: parseInt(formData.deposit_amount) || 0,
         bedrooms: parseInt(formData.bedrooms) || 2,
