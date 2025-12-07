@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
@@ -7,6 +7,7 @@ import {
   Building2,
   ClipboardCheck,
   PlayCircle,
+  X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { DemoModal } from '@/components/demo/DemoModal'
@@ -19,22 +20,53 @@ const navigation = [
   { name: 'Review Queue', href: '/reviews', icon: ClipboardCheck },
 ]
 
-export function Sidebar() {
+interface SidebarProps {
+  open: boolean
+  onClose: () => void
+}
+
+export function Sidebar({ open, onClose }: SidebarProps) {
   const location = useLocation()
   const [demoOpen, setDemoOpen] = useState(false)
 
+  // Close sidebar on route change (mobile)
+  useEffect(() => {
+    onClose()
+  }, [location.pathname, onClose])
+
   return (
     <>
-      <div className="flex h-full w-64 flex-col bg-gradient-to-b from-slate-900 to-slate-800 border-r border-slate-700 shadow-premium-lg">
+      {/* Mobile overlay */}
+      {open && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div className={cn(
+        "fixed lg:static inset-y-0 left-0 z-50 flex h-full w-64 flex-col bg-gradient-to-b from-slate-900 to-slate-800 border-r border-slate-700 shadow-premium-lg transition-transform duration-300 lg:translate-x-0",
+        open ? "translate-x-0" : "-translate-x-full"
+      )}>
         {/* Logo */}
-        <div className="flex h-16 items-center border-b border-slate-700 px-6 bg-slate-900/50">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 shadow-lg">
-            <Building2 className="h-6 w-6 text-white" />
+        <div className="flex h-16 items-center justify-between border-b border-slate-700 px-4 sm:px-6 bg-slate-900/50">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 shadow-lg">
+              <Building2 className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <div className="text-xl font-bold text-white">RentFlow</div>
+              <div className="text-xs text-blue-300">Premium CRM</div>
+            </div>
           </div>
-          <div className="ml-3">
-            <div className="text-xl font-bold text-white">RentFlow</div>
-            <div className="text-xs text-blue-300">Premium CRM</div>
-          </div>
+          {/* Close button for mobile */}
+          <button
+            onClick={onClose}
+            className="lg:hidden text-slate-400 hover:text-white p-2"
+          >
+            <X className="h-6 w-6" />
+          </button>
         </div>
 
         {/* Navigation */}

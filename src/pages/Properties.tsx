@@ -110,16 +110,16 @@ export function Properties() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
             Property Catalog
           </h1>
-          <p className="text-muted-foreground mt-1">Browse and manage property listings</p>
+          <p className="text-sm text-muted-foreground mt-1">Browse and manage property listings</p>
         </div>
         <Button 
           onClick={() => setAddDialogOpen(true)}
-          className="premium-gradient shadow-lg hover:shadow-xl transition-all"
+          className="premium-gradient shadow-lg hover:shadow-xl transition-all w-full sm:w-auto"
           size="lg"
         >
           <Plus className="h-5 w-5 mr-2" />
@@ -128,46 +128,48 @@ export function Properties() {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search properties by title or location..."
+            placeholder="Search properties..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
           />
         </div>
-        <Select
-          value={filters.property_type || 'all'}
-          onValueChange={(value) => setFilters({ ...filters, property_type: value === 'all' ? undefined : value })}
-        >
-          <SelectTrigger className="w-40">
-            <SelectValue placeholder="Type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="apartment">Apartment</SelectItem>
-            <SelectItem value="house">House</SelectItem>
-            <SelectItem value="villa">Villa</SelectItem>
-            <SelectItem value="studio">Studio</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select
-          value={filters.bedrooms?.toString() || 'all'}
-          onValueChange={(value) => setFilters({ ...filters, bedrooms: value === 'all' ? undefined : parseInt(value) })}
-        >
-          <SelectTrigger className="w-32">
-            <SelectValue placeholder="Bedrooms" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Any</SelectItem>
-            <SelectItem value="1">1 BHK</SelectItem>
-            <SelectItem value="2">2 BHK</SelectItem>
-            <SelectItem value="3">3 BHK</SelectItem>
-            <SelectItem value="4">4+ BHK</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex gap-2">
+          <Select
+            value={filters.property_type || 'all'}
+            onValueChange={(value) => setFilters({ ...filters, property_type: value === 'all' ? undefined : value })}
+          >
+            <SelectTrigger className="flex-1 sm:w-32">
+              <SelectValue placeholder="Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="apartment">Apartment</SelectItem>
+              <SelectItem value="house">House</SelectItem>
+              <SelectItem value="villa">Villa</SelectItem>
+              <SelectItem value="studio">Studio</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select
+            value={filters.bedrooms?.toString() || 'all'}
+            onValueChange={(value) => setFilters({ ...filters, bedrooms: value === 'all' ? undefined : parseInt(value) })}
+          >
+            <SelectTrigger className="flex-1 sm:w-28">
+              <SelectValue placeholder="Beds" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Any</SelectItem>
+              <SelectItem value="1">1 BHK</SelectItem>
+              <SelectItem value="2">2 BHK</SelectItem>
+              <SelectItem value="3">3 BHK</SelectItem>
+              <SelectItem value="4">4+ BHK</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Properties Grid */}
@@ -179,7 +181,7 @@ export function Properties() {
           </div>
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProperties.map((property) => (
             <Card key={property.id} className="overflow-hidden hover:shadow-premium transition-all duration-300 hover:-translate-y-1">
               <div className="h-56 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex items-center justify-center relative overflow-hidden">

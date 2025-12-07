@@ -177,16 +177,16 @@ export function Leads() {
       </div>
 
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
             Lead Management
           </h1>
-          <p className="text-muted-foreground mt-1">Manage and track your property leads</p>
+          <p className="text-sm text-muted-foreground mt-1">Manage and track your property leads</p>
         </div>
         <Button 
           onClick={() => setAddDialogOpen(true)} 
-          className="premium-gradient shadow-lg hover:shadow-xl transition-all"
+          className="premium-gradient shadow-lg hover:shadow-xl transition-all w-full sm:w-auto"
           size="lg"
         >
           <Plus className="h-5 w-5 mr-2" />
@@ -195,39 +195,44 @@ export function Leads() {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search by name, phone, or email..."
+            placeholder="Search leads..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
           />
         </div>
-        <Select
-          value={filters.status || 'all'}
-          onValueChange={(value) => setFilters({ ...filters, status: value === 'all' ? undefined : value })}
-        >
-          <SelectTrigger className="w-40">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="hot">Hot</SelectItem>
-            <SelectItem value="warm">Warm</SelectItem>
-            <SelectItem value="cold">Cold</SelectItem>
-            <SelectItem value="new">New</SelectItem>
-            <SelectItem value="converted">Converted</SelectItem>
-          </SelectContent>
-        </Select>
-        <Button variant="outline">
-          <Filter className="h-4 w-4 mr-2" />
-          More Filters
-        </Button>
+        <div className="flex gap-2">
+          <Select
+            value={filters.status || 'all'}
+            onValueChange={(value) => setFilters({ ...filters, status: value === 'all' ? undefined : value })}
+          >
+            <SelectTrigger className="w-32 sm:w-40">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="hot">Hot</SelectItem>
+              <SelectItem value="warm">Warm</SelectItem>
+              <SelectItem value="cold">Cold</SelectItem>
+              <SelectItem value="new">New</SelectItem>
+              <SelectItem value="converted">Converted</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button variant="outline" className="hidden sm:flex">
+            <Filter className="h-4 w-4 mr-2" />
+            Filters
+          </Button>
+          <Button variant="outline" size="icon" className="sm:hidden">
+            <Filter className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
-      {/* Table */}
+      {/* Table - Desktop */}
       {loading ? (
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
@@ -236,20 +241,22 @@ export function Leads() {
           </div>
         </div>
       ) : (
-        <div className="rounded-lg border bg-card shadow-premium overflow-hidden">
-          <Table>
-            <TableHeader className="bg-slate-50">
-              <TableRow>
-                <TableHead className="font-semibold">Name</TableHead>
-                <TableHead className="font-semibold">Contact</TableHead>
-                <TableHead className="font-semibold text-center">Score</TableHead>
-                <TableHead className="font-semibold">Status</TableHead>
-                <TableHead className="font-semibold">Preferences</TableHead>
-                <TableHead className="font-semibold">Budget (Monthly)</TableHead>
-                <TableHead className="font-semibold">Created</TableHead>
-                <TableHead className="font-semibold text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
+        <>
+          {/* Desktop Table */}
+          <div className="hidden md:block rounded-lg border bg-card shadow-premium overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-slate-50">
+                <TableRow>
+                  <TableHead className="font-semibold">Name</TableHead>
+                  <TableHead className="font-semibold">Contact</TableHead>
+                  <TableHead className="font-semibold text-center">Score</TableHead>
+                  <TableHead className="font-semibold">Status</TableHead>
+                  <TableHead className="font-semibold">Preferences</TableHead>
+                  <TableHead className="font-semibold">Budget (Monthly)</TableHead>
+                  <TableHead className="font-semibold">Created</TableHead>
+                  <TableHead className="font-semibold text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
             <TableBody>
               {filteredLeads.map((lead) => (
                 <TableRow key={lead.id} className="hover:bg-slate-50 transition-colors">
@@ -308,6 +315,66 @@ export function Leads() {
             </TableBody>
           </Table>
         </div>
+
+        {/* Mobile Cards */}
+        <div className="md:hidden space-y-4">
+          {filteredLeads.map((lead) => (
+            <Card key={lead.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="text-lg">{lead.name}</CardTitle>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge className={getLeadStatusColor(lead.status)}>
+                        {lead.status.toUpperCase()}
+                      </Badge>
+                      <div className="flex items-center gap-1">
+                        <div className="text-lg font-bold text-primary">{lead.lead_score}</div>
+                        <div className={`h-2 w-2 rounded-full ${
+                          lead.lead_score >= 80 ? 'bg-red-500' :
+                          lead.lead_score >= 50 ? 'bg-orange-500' : 'bg-blue-500'
+                        }`} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm">
+                <div className="flex items-start gap-2">
+                  <span className="text-xs">📱</span>
+                  <span>{lead.phone}</span>
+                </div>
+                {lead.email && (
+                  <div className="flex items-start gap-2 text-muted-foreground">
+                    <span className="text-xs">✉️</span>
+                    <span className="truncate">{lead.email}</span>
+                  </div>
+                )}
+                <div className="flex items-start gap-2">
+                  <span className="text-xs">📍</span>
+                  <div className="flex-1">
+                    <div className="font-medium">{lead.location_preference}</div>
+                    <div className="text-muted-foreground">
+                      {lead.bedrooms_preference}BHK {lead.property_type_preference}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between pt-2 border-t">
+                  <div>
+                    <div className="text-xs text-muted-foreground">Budget</div>
+                    <div className="font-semibold text-primary">
+                      {formatCurrency(lead.budget_min || 0)} - {formatCurrency(lead.budget_max || 0)}
+                    </div>
+                  </div>
+                  <Button size="sm" className="premium-gradient">
+                    View Details
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        </>
       )}
 
       <AddLeadDialog 
